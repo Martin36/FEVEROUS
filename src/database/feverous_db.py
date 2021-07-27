@@ -63,3 +63,14 @@ class FeverousDB(object):
         results = [r[0] for r in cursor.fetchall()]
         cursor.close()
         return results
+
+    def get_doc_jsons(self, doc_ids):
+        """Fetch the raw text of the docs in 'doc_ids'."""
+        cursor = self.connection.cursor()
+        doc_ids = [doc_id.replace("'", "''") for doc_id in doc_ids]
+        id_str = "'" + "', '".join(doc_ids) + "'"
+        query = "SELECT data FROM wiki WHERE id IN ({})".format(id_str)
+        cursor.execute(query)
+        results = [json.loads(r[0]) for r in cursor.fetchall()]
+        cursor.close()
+        return results
